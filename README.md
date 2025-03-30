@@ -66,4 +66,5 @@
 [Исследование принципов работы контейнера std::vector (PDF)](source/STL_vector.pdf)
 
 **СХЕМА КЛАССОВ ПРОЕКТА**
+
 ![Схема классов проекта](https://raw.githubusercontent.com/Zabytina-Julia-Artemovna/Individual-Project-Library-/main/source/diagram.png)
