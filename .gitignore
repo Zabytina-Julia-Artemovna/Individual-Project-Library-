@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+# Visual Studio
+.vs/
+Debug/
+Release/
+x64/
+*.sln
+*.vcxproj.user
+*.vcxproj.filters
+*.suo
+*.user
+*.aps
+*.pdb
+*.opendb
