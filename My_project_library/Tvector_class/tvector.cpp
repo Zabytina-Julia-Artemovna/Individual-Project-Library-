@@ -1,5 +1,7 @@
 #include "tvector.h"
 #include <stdexcept>
+#include <exception>
+#include <random>
 #define RESERVE 15
 
 template <class T>
@@ -100,3 +102,36 @@ Tvector<T>::~Tvector() noexcept  {
 	delete[] _data;
 	delete[] _states;
 };
+
+/*
+template <class T>
+void Tvector<T>::sort_array(Tvector<T>& vector) {
+	int h = 1;
+	while (h < _size / 3) {
+		h = 3 * h + 1;
+	}
+	while (h >= 1) {
+		for (size_t i = h; i < _size; i++) {
+			for (size_t j = i; j >= h && _data[j] < _data[j - h]; j -= h) {
+				std::swap(_data[j], _data[j - h]);
+				std::swap(_states[j], _states[j - h]);
+			}
+		}
+		h /= 3;
+	}
+}
+template <class T>
+void Tvector<T>::shuffle_array(Tvector<T>& vector) {
+	size_t j = 0;
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	for(size_t i = _size; i-- > 0; ) {
+
+		std::uniform_int_distribution<size_t> dist(0, i);
+		j = dist(gen);
+		std::swap(vector._data[i], vector._data[j]);
+		std::swap(vector._states[i], vector._states[j]);
+	}
+}
+
+*/
