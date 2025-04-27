@@ -15,11 +15,13 @@ class Tvector {
 	}
 
 public:
-	Tvector();
+	Tvector() noexcept;
 	Tvector(size_t size);
 	Tvector(T* data, size_t size);
 	Tvector(const Tvector<T>& other_vector);
 	~Tvector() noexcept;
+
+	void sort_array(Tvector<T>& vector);
 
 	inline bool is_empty() const noexcept;
 	size_t size() const noexcept;

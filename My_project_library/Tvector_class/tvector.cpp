@@ -1,12 +1,34 @@
 #include "tvector.h"
-#include <exception>
+#include <stdexcept>
 #define RESERVE 15
 
 template <class T>
-Tvector<T>::Tvector() : _size(0), _capacity(0), _data(nullptr), _states(nullptr), _deleted(0) {}
+Tvector<T>::Tvector() noexcept{
+	_size = 0;
+	_capacity = 0;
+	_data = nullptr;
+	_states = nullptr;
+	_deleted = 0;
+}
 template <class T>
-Tvector<T>::Tvector(size_t size) : _size(size), _capacity(size + RESERVE),
-_data(new T[_capacity]()), _states(new State[_capacity]), _deleted(0) {
+Tvector<T>::Tvector(size_t size) {
+	_size = size;
+	_capacity = size + RESERVE;
+	try {
+		_data = new T[_capacity];
+	}
+	catch (const std::bad_alloc&) {
+		throw;
+	}
+	try {
+		_states = new State[_capacity];
+	}
+	catch (const std::bad_alloc&) {
+		delete[] _data;
+		throw;
+	}
+	_deleted = 0;
+
 	for (size_t i = 0; i < _capacity; ++i) {
 		_states[i] = i < _size ? State::busy : State::empty;
 	}
@@ -14,10 +36,24 @@ _data(new T[_capacity]()), _states(new State[_capacity]), _deleted(0) {
 template <class T>
 Tvector<T>::Tvector(T* data, size_t size)
 {
+	if (size > 0 && data == nullptr) {
+		throw std::invalid_argument("Null data pointer with non-zero size");
+	}
 	_size = size;
 	_capacity = _size + RESERVE;
-	_data = new T[_capacity];
-	_states = new State[_capacity];
+	try {
+		_data = new T[_capacity];
+	}
+	catch (const std::bad_alloc&) {
+		throw;
+	}
+	try {
+		_states = new State[_capacity];
+	}
+	catch (const std::bad_alloc&) {
+		delete[] _data;
+		throw;
+	}
 	for (size_t i = 0; i < _capacity; ++i) {
 		if (i < _size) {
 			_data[i] = data[i];
@@ -30,12 +66,27 @@ Tvector<T>::Tvector(T* data, size_t size)
 	_deleted = 0;
 }
 template <class T>
-Tvector<T>::Tvector(const Tvector<T>& other_vector) : _size(other_vector._size),
-_capacity(other_vector._capacity), _data(new T[other_vector._capacity]),
-_states(new State[other_vector._capacity]), _deleted(other_vector._deleted) {
+Tvector<T>::Tvector(const Tvector<T>& other_vector) {
 	if (this == &other_vector) {
 		throw std::logic_error("Self-copy prohibited");
 	}
+	_size = other_vector._size;
+	_capacity = other_vector._capacity;
+	try {
+		_data = new T[_capacity];
+	}
+	catch (const std::bad_alloc&) {
+		throw;
+	}
+	try {
+		_states = new State[_capacity];
+	}
+	catch (const std::bad_alloc&) {
+		delete[] _data;
+		throw;
+	}
+	_deleted = other_vector._deleted;
+
 	for (size_t i = 0; i < other_vector._size; ++i) {
 		_data[i] = other_vector._data[i];
 		_states[i] = other_vector._states[i];
@@ -45,9 +96,7 @@ _states(new State[other_vector._capacity]), _deleted(other_vector._deleted) {
 	}
 }
 template <class T>
-Tvector<T>::~Tvector() noexcept {
+Tvector<T>::~Tvector() noexcept  {
 	delete[] _data;
 	delete[] _states;
-	_data = nullptr;
-	_states = nullptr;
 };
