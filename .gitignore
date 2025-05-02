@@ -36,5 +36,3 @@ Debug/
 *.exe
 *.out
 *.app
-My_project_library/Library_*/
-My_project_library/Tests/
