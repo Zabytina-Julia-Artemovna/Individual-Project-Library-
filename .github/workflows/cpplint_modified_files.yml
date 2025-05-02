@@ -16,4 +16,4 @@ jobs:
       
     - name: Run cpplint
       run: cpplint --exclude="gtest/*" --recursive .
-      continue-on-error: true 
+      continue-on-error: false
