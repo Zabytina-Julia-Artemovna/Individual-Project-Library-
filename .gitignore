@@ -38,6 +38,7 @@ x64/
 *.sln
 *.vcxproj.user
 *.vcxproj.filters
+*.vcxproj
 *.suo
 *.user
 *.aps
