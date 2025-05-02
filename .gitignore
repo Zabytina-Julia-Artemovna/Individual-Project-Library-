@@ -36,5 +36,6 @@ Debug/
 *.exe
 *.out
 *.app
-My_project_library/Library_*/
-My_project_library/Tests/
+/My_project_library/Library_classes/
+/My_project_library/Library_interface/
+/My_project_library/Tests/
