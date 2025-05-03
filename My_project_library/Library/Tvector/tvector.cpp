@@ -2,7 +2,9 @@
 #include <stdexcept>
 #include <exception>
 #include <random>
+#include <iostream>
 #define RESERVE 15
+#define PERSENT_OF_DELETED_ELEMENTS
 
 template <class T>
 Tvector<T>::Tvector() noexcept {
@@ -103,35 +105,108 @@ Tvector<T>::~Tvector() noexcept {
 	delete[] _states;
 };
 
-/*
 template <class T>
-void Tvector<T>::sort_array(Tvector<T>& vector) {
-	int h = 1;
-	while (h < _size / 3) {
-		h = 3 * h + 1;
+void Tvector<T>::shrink_to_fit() {
+	if (_size >= _capacity) {
+		return;
 	}
-	while (h >= 1) {
-		for (size_t i = h; i < _size; i++) {
-			for (size_t j = i; j >= h && _data[j] < _data[j - h]; j -= h) {
-				std::swap(_data[j], _data[j - h]);
-				std::swap(_states[j], _states[j - h]);
-			}
+	T* new_data = new T[_size];
+	State* new_states = new State[_size];
+	for (size_t i = 0; i < _size; ++i) {
+		new_data[i] = std::move(_data[i]);
+		new_states[i] = _states[i];
+	}
+	delete[] _data;
+	delete[] _states;
+	_data = new_data;
+	_states = new_states;
+	_capacity = _size;
+
+}
+template <class T>
+void Tvector<T>::reserve_memory(size_t new_capacity) {
+	if (new_capacity <= _capacity) {
+		return;
+	}
+	T* new_data = new T[new_capacity];
+	State* new_states = new State[new_capacity];
+	std::fill_n(new_states, new_capacity, empty);
+	for (size_t i = 0; i < _size; ++i) {
+		new_data[i] = std::move(_data[i]);
+		new_states[i] = _states[i];
+	}
+	delete[] _data;
+	delete[] _states;
+	_data = new_data;
+	_states = new_states;
+	_capacity = new_capacity;
+}
+template <class T>
+void Tvector<T>::resize(size_t new_size) {
+	if (new_size == _size) {
+		return;
+	}
+	else if (new_size > _size) {
+		T* new_data = new T[new_size];
+		State* new_states = new State[new_size];
+		std::fill_n(new_states, new_size, empty);
+		for (size_t i = 0; i < _size; ++i) {
+			_new_data[i] = std::move(_data[i]);
+			new_states = _states[i];
 		}
-		h /= 3;
+		delete[] _data;
+		delete[] _states;
 	}
+}
+/*
+void push_front_elem(int* mass, int size, int value) {
+	for (int i = size - 1; i > 0; i--) {
+		mass[i] = mass[i - 1];
+	}
+	mass[0] = value;
+}
+
+void push_back_elem(int* mass, int size, int value) {
+	mass[size - 1] = value;
+}
+
+void insert_elem(int* mass, int size, int pos, int value) {
+	for (int i = size - 1; i > pos; i--) {
+		mass[i] = mass[i - 1];
+	}
+	mass[pos] = value;
+}
+
+*/
+
+/*
+Для вектора:
+template <class T>
+void Tvector<T>::push_front(const T& value) {
+	if (_size >= _capacity) {
+		// Реаллокация (например, увеличиваем _capacity в 2 раза)
+
+	}
+	for (size_t i = _size; i > 0; --i) {
+		_data[i] = std::move(_data[i - 1]);
+	}
+	_data[0] = value;
+	_size++;
 }
 template <class T>
-void Tvector<T>::shuffle_array(Tvector<T>& vector) {
-	size_t j = 0;
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	for(size_t i = _size; i-- > 0; ) {
+void Tvector<T>::push_back(const T& value) {
+	if (_size >= _capacity) {
+		// Реаллокация (например, увеличиваем _capacity в 2 раза)
 
-		std::uniform_int_distribution<size_t> dist(0, i);
-		j = dist(gen);
-		std::swap(vector._data[i], vector._data[j]);
-		std::swap(vector._states[i], vector._states[j]);
 	}
-}
 
+}
+template <class T>
+void Tvector<T>::insert(int position, const T& value) {
+	if (_size >= _capacity) {
+		// Реаллокация (например, увеличиваем _capacity в 2 раза)
+
+	}
+
+}
 */

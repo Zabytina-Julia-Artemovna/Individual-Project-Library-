@@ -32,15 +32,27 @@ public:
 	}
 
 	inline T& front() noexcept {
+		if (_size == 0) {
+			throw std::out_of_range("Vector is empty");
+		}
 		return _data[0];
 	}
 	inline T& back() noexcept {
+		if (_size == 0) {
+			throw std::out_of_range("Vector is empty");
+		}
 		return _data[_size - 1];
 	}
 	inline const T& front() noexcept {
+		if (_size == 0) {
+			throw std::out_of_range("Vector is empty");
+		}
 		return _data[0];
 	}
 	inline const T& back() noexcept {
+		if (_size == 0) {
+			throw std::out_of_range("Vector is empty");
+		}
 		return _data[_size - 1];
 	}
 
@@ -57,4 +69,14 @@ public:
 	inline T* end() const noexcept {
 		return _data + _size;
 	}
+
+	void shrink_to_fit();
+	void reserve_memory(size_t new_capacity);
+	void resize(size_t new_size);
+	void resize(size_t new_size, T& value);
 };
+/*
+	void push_front(const T& value);
+	void push_back(const T& value);
+	void insert(int position, const T& value);
+	*/
