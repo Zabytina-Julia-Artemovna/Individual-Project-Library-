@@ -71,9 +71,52 @@ public:
 	}
 
 	void shrink_to_fit();
-	void reserve_memory(size_t new_capacity);
+	void reserve(size_t new_capacity);
 	void resize(size_t new_size);
 	void resize(size_t new_size, T& value);
+	
+	friend bool operator == (const Tvector<T>& vector1, const Tvector<T>& vector2) {
+		if (vector1._size == vector2._size) {
+			for (size_t i = 0; i < vector1._size; ++i) {
+				if (vector1[i] != vector2[i]) {
+					return false;
+				}
+			}
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool operator != (const Tvector<T>& vector1, const Tvector<T>& vector2) {
+		return !(vector1 == vector2);
+	}
+	Tvector<T>& operator = (const Tvector<T>& vector) {
+		T* new_data = new T[vector._capacity];
+		State* new_states = new State[vector._capacity];
+		std::fill_n(new_states, new_capacity, empty);
+		size_t new_deleted = 0;
+		for (size_t i = 0; i < vector._capacity) {
+			if (vector._states[i] == deleted) {
+				new_deleted++;
+			}
+			new_data[i] = vector[i];
+			new_states[i] = vector._states[i];
+		}
+		delete[] _data;
+		delete[] _states;
+		_data = new_data;
+		_states = new_states;
+		_capacity = vector._capacity;
+		_size = vector._size;
+		_deleted = new_deleted;
+	}
+	inline const T& operator [] (size_t index) const {
+		return this._data[index];
+	}
+	inline T& operator [] (size_t index){
+		return _data[index];
+	}
 };
 /*
 	void push_front(const T& value);
