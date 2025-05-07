@@ -273,9 +273,9 @@ void Tvector<T>::resize(size_t new_size, T& value) {
 		if (this == &vector) {
 			return *this;
 		}
-		T* new_data = vector._data;
-		State* new_states = vector._states;
-		for (size_t i = 0; i < vector._capacity; ++i) {
+		T* new_data = new T[vector._capacity];
+		State* new_states = new State[vector._capacity];
+		for (size_t i = 0; i < vector._size; ++i) {
 			new_data[i] = vector[i];
 			new_states[i] = vector._states[i];
 		}
@@ -288,10 +288,10 @@ void Tvector<T>::resize(size_t new_size, T& value) {
 		_deleted = vector._deleted;
 		return *this;
 	}
-	inline const T& operator [] (size_t index) const {
-		return this._data[index];
+	inline const T& operator[](size_t index) const {
+		return _data[index]; 
 	}
-	inline T& operator [] (size_t index){
+	inline T& operator[](size_t index) {
 		return _data[index];
 	}
 };
