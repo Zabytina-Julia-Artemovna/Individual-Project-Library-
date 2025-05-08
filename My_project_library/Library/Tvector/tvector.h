@@ -4,7 +4,7 @@
 #include <exception>
 #include <random>
 #include <iostream>
-#include <memory>
+#include <utility>
 enum State {
 	empty, busy, deleted
 };
@@ -20,14 +20,14 @@ class Tvector {
 		return _size == _capacity;
 	}
 public:
-	Tvector<T>::Tvector() noexcept {
+	Tvector() noexcept {
 		_size = 0;
 		_capacity = 0;
 		_data = nullptr;
 		_states = nullptr;
 		_deleted = 0;
 	}
-	Tvector<T>::Tvector(size_t size) {
+	Tvector(size_t size) {
 		_size = size;
 		_capacity = size + RESERVE;
 		try {
@@ -49,7 +49,7 @@ public:
 			_states[i] = i < _size ? State::busy : State::empty;
 		}
 	}
-	Tvector<T>::Tvector(T* data, size_t size)
+	Tvector(T* data, size_t size)
 	{
 		if (size > 0 && data == nullptr) {
 			throw std::invalid_argument("Null data pointer with non-zero size");
@@ -80,12 +80,11 @@ public:
 		}
 		_deleted = 0;
 	}
-	Tvector<T>::Tvector(const Tvector<T>& other_vector) {
-		if (this == &other_vector) {
-			throw std::logic_error("Self-copy prohibited");
-		}
+	Tvector(const Tvector<T>& other_vector) {
 		_size = other_vector._size;
 		_capacity = other_vector._capacity;
+		_data = nullptr;
+		_states = nullptr;
 		try {
 			_data = new T[_capacity];
 		}
@@ -109,7 +108,7 @@ public:
 			_states[i] = State::empty;
 		}
 	}
-	Tvector<T>::~Tvector() noexcept {
+	~Tvector() noexcept {
 		delete[] _data;
 		delete[] _states;
 	};
@@ -137,13 +136,13 @@ public:
 		}
 		return _data[_size - 1];
 	}
-	inline const T& front() noexcept {
+	inline const T& front() const {
 		if (_size == 0) {
 			throw std::out_of_range("Vector is empty");
 		}
 		return _data[0];
 	}
-	inline const T& back() noexcept {
+	inline const T& back() const{
 		if (_size == 0) {
 			throw std::out_of_range("Vector is empty");
 		}
@@ -164,7 +163,7 @@ public:
 		return _data + _size;
 	}
 
-	void Tvector<T>::shrink_to_fit() {
+	void shrink_to_fit() {
 		if (_size >= _capacity) {
 			
 		} else if (_size == 0) {
@@ -189,13 +188,13 @@ public:
 			_capacity = _size;
 		}
 	}
-	void Tvector<T>::reserve(size_t new_capacity) {
+	void reserve(size_t new_capacity) {
 		if (new_capacity <= _capacity) {
 			return;
 		}
 		T* new_data = new T[new_capacity];
 		State* new_states = new State[new_capacity];
-		std::fill_n(new_states, new_capacity, empty);
+		std::fill_n(new_states, new_capacity, State::empty);
 		for (size_t i = 0; i < _size; ++i) {
 			new_data[i] = std::move(_data[i]);
 			new_states[i] = _states[i];
@@ -206,70 +205,48 @@ public:
 		_states = new_states;
 		_capacity = new_capacity;
 	}
-	void resize(size_t new_size);
-	void resize(size_t new_size, T& value);
-	/*
-
-template <class T>
-void Tvector<T>::resize(size_t new_size) {
-	if (new_size == _size) {
-		return;
-	}
-	else if (new_size < _size){
-		size_t new_capacity = new_size + RESERVE;
-		T* new_data = new T[new_capacity];
-		State* new_states = new State[new_capacity];
-		std::fill_n(new_states, new_capacity, empty);
-		size_t count_of_deleted = 0;
-		for (size_t i = 0; i < new_size; ++i) {
-			if (_states[i] == deleted) {
-				count_of_deleted++;
+	void resize(size_t new_size) {
+		if (new_size == _size) {
+			return;
+		} else if (new_size < _size) { 
+			for (size_t i = new_size; i < _size; ++i) {
+				_states[i] = State::empty;
 			}
-			new_data[i] = std::move(_data[i]);
-			new_states[i] = _states[i];
-		}
-		delete[] _data;
-		delete[] _states;
-		_size = new_size;
-		_capacity = new_capacity;
-		_deleted = count_of_deleted;
-	}
-	else if (new_size > _size) {
-		size_t new_capacity = new_size + RESERVE;
-		T* new_data = new T[new_capacity];
-		State* new_states = new State[new_capacity];
-		std::fill_n(new_states, new_capacity, empty);
-		for (size_t i = 0; i < new_size; ++i) {
-			new_data[i] = std::move(_data[i]);
-			new_states[i] = _states[i];
-		}
-		delete[] _data;
-		delete[] _states;
-		_size = new_size;
-		_capacity = new_capacity;
-	}
-}
-template <class T>
-void Tvector<T>::resize(size_t new_size, T& value) {
-
-}
-*/
-	
-	friend bool operator == (const Tvector<T>& vector1, const Tvector<T>& vector2) {
-		if (vector1._size == vector2._size) {
-			for (size_t i = 0; i < vector1._size; ++i) {
-				if (vector1[i] != vector2[i]) {
-					return false;
-				}
-			}
-			return true;
+			_size = new_size;
 		}
 		else {
-			return false;
+			size_t new_capacity = new_size + RESERVE;
+			T* new_data = new T[new_capacity];
+			State* new_states = new State[new_capacity];
+			std::fill_n(new_states, new_capacity, State::empty);
+			for (size_t i = 0; i < _size; ++i) {
+				new_data[i] = std::move(_data[i]);
+				new_states[i] = _states[i];
+			}
+			for (size_t i = _size; i < new_size; ++i) {
+				new_data[i] = T(); 
+			}
+			delete[] _data;
+			delete[] _states;
+			_size = new_size;
+			_capacity = new_capacity; 
 		}
 	}
-	bool operator != (const Tvector<T>& vector1, const Tvector<T>& vector2) {
-		return !(vector1 == vector2);
+	void resize(size_t new_size, T& value) {
+
+	}
+	bool operator==(const Tvector<T>& vector) const {
+		if (this->_size != vector._size)  
+			return false;
+
+		for (size_t i = 0; i < _size; ++i) {
+			if ((*this)[i] != vector[i])     
+				return false;
+		}
+		return true;
+	}
+	bool operator!=(const Tvector<T>& vector) const {
+		return !(*this == vector);
 	}
 	Tvector<T>& operator = (const Tvector<T>& vector) {
 		if (this == &vector) {
@@ -296,14 +273,13 @@ void Tvector<T>::resize(size_t new_size, T& value) {
 	inline T& operator[](size_t index) {
 		return _data[index];
 	}
+
 	T& at(size_t index) {
 		if (index >= _size) {
-			throw std::out_of_range("Index " + std::to_string(index) +
-				" out of range (size = " + std::to_string(_size) + ")");
+			throw std::out_of_range("Index out of range");
 		}
 		if (_states[index] != busy) {
-			throw std::logic_error("Element at index " + std::to_string(index) +
-				" is not available (deleted or empty)");
+			throw std::logic_error("Element at this index is not available (deleted or empty)");
 		}
 		return _data[index];
 	}
@@ -313,7 +289,7 @@ void Tvector<T>::resize(size_t new_size, T& value) {
 	void assign(size_t count, const T& value) { 
 		for (size_t i = 0; i < _size; ++i) {
 			if (_states[i] == State::busy) {
-				std::destroy_at(&_data[i]);
+				//std::destroy_at(&_data[i]);
 			}
 			_states[i] = State::empty;
 		}
@@ -330,7 +306,7 @@ void Tvector<T>::resize(size_t new_size, T& value) {
 	void clear() {
 		for (size_t i = 0; i < _size; ++i) {
 			if (_states[i] == State::busy) {
-				std::destroy_at(&_data[i]);  
+				//std::destroy_at(&_data[i]);  
 			}
 			_states[i] = State::empty;
 		}
