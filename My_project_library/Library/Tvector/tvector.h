@@ -1,24 +1,167 @@
 #pragma once
-#define RESERVE 15
+#define RESERVE 256
 #include <stdexcept>
 #include <exception>
 #include <random>
 #include <iostream>
 #include <utility>
+#include <memory>
+#include <algorithm>
 enum State {
 	empty, busy, deleted
 };
 template <class T>
 class Tvector {
+	static_assert(std::is_nothrow_move_constructible_v<T>,
+		"T must have noexcept move constructor");
+	static_assert(std::is_default_constructible_v<T>,
+		"T must be default-constructible");
+private:
 	size_t _size;
 	size_t _capacity;
 	T* _data;
 	State* _states;
 	size_t _deleted;
+	void resize(size_t new_size) {
+		if (new_size == _size) {
+			return;
+		} else if (new_size < _size) {
+			for (size_t i = new_size; i < _size; ++i) {
+				if (_states[i] == State::deleted) {
+					_deleted--;  
+				}
+				_data[i].~T();  
+				_states[i] = State::empty;
+			}
+			_size = new_size;
+		} else { 
+			size_t new_capacity = new_size + RESERVE;
+			T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
+			State* new_states = new State[new_capacity];
+			try {
+				for (size_t i = 0; i < _size; ++i) {
+					new (new_data + i) T(std::move(_data[i]));  
+					new_states[i] = _states[i];
+				}
+				for (size_t i = _size; i < new_size; ++i) {
+					new (new_data + i) T(); 
+					new_states[i] = State::busy;
+				}
+				for (size_t i = 0; i < _size; ++i) {
+					_data[i].~T();
+				}
+				::operator delete(_data);
+				delete[] _states;
 
+				_data = new_data;
+				_states = new_states;
+				_capacity = new_capacity;
+				_size = new_size;
+			}
+			catch (...) {
+				for (size_t i = 0; i < new_size; ++i) {
+					new_data[i].~T();
+				}
+				::operator delete(new_data);
+				delete[] new_states;
+				throw;
+			}
+		}
+	}
+	void resize(size_t new_size, const T& value) {
+		if (new_size == _size) {
+			return;
+		}
+		else if (new_size < _size) {
+			for (size_t i = new_size; i < _size; ++i) {
+				if (_states[i] == State::deleted) {
+					_deleted--;
+				}
+				_data[i].~T();
+				_states[i] = State::empty;
+			}
+			_size = new_size;
+		}
+		else {
+			size_t new_capacity = new_size + RESERVE;
+			T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
+			State* new_states = new State[new_capacity];
+			try {
+				for (size_t i = 0; i < _size; ++i) {
+					new (new_data + i) T(std::move(_data[i]));
+					new_states[i] = _states[i];
+				}
+				for (size_t i = _size; i < new_size; ++i) {
+					new (new_data + i) T(value);
+					new_states[i] = State::busy;
+				}
+				for (size_t i = 0; i < _size; ++i) {
+					_data[i].~T();
+				}
+				::operator delete(_data);
+				delete[] _states;
+
+				_data = new_data;
+				_states = new_states;
+				_capacity = new_capacity;
+				_size = new_size;
+			}
+			catch (...) {
+				for (size_t i = 0; i < new_size; ++i) {
+					new_data[i].~T();
+				}
+				::operator delete(new_data);
+				delete[] new_states;
+				throw;
+			}
+		}
+	} 
+	void shrink_to_fit() {
+		if (_size >= _capacity) {
+
+		}
+		else if (_size == 0) {
+			delete[] _data;
+			delete[] _states;
+			_data = nullptr;
+			_states = nullptr;
+			_capacity = 0;
+			_deleted = 0;
+		}
+		else {
+			T* new_data = new T[_size];
+			State* new_states = new State[_size];
+			for (size_t i = 0; i < _size; ++i) {
+				new_data[i] = std::move(_data[i]);
+				new_states[i] = _states[i];
+			}
+			delete[] _data;
+			delete[] _states;
+			_data = new_data;
+			_states = new_states;
+			_capacity = _size;
+		}
+	}
+	void reserve(size_t new_capacity) {
+		if (new_capacity <= _capacity) {
+			return;
+		}
+		T* new_data = new T[new_capacity];
+		State* new_states = new State[new_capacity];
+		std::fill_n(new_states, new_capacity, State::empty);
+		for (size_t i = 0; i < _size; ++i) {
+			new_data[i] = std::move(_data[i]);
+			new_states[i] = _states[i];
+		}
+		delete[] _data;
+		delete[] _states;
+		_data = new_data;
+		_states = new_states;
+		_capacity = new_capacity;
+	}
 	inline bool is_full() const noexcept {
 		return _size == _capacity;
-	}
+	} 
 public:
 	Tvector() noexcept {
 		_size = 0;
@@ -163,78 +306,6 @@ public:
 		return _data + _size;
 	}
 
-	void shrink_to_fit() {
-		if (_size >= _capacity) {
-			
-		} else if (_size == 0) {
-			delete[] _data;
-			delete[] _states;
-			_data = nullptr;
-			_states = nullptr;
-			_capacity = 0;
-			_deleted = 0;
-		}
-		else {
-			T* new_data = new T[_size];
-			State* new_states = new State[_size];
-			for (size_t i = 0; i < _size; ++i) {
-				new_data[i] = std::move(_data[i]);
-				new_states[i] = _states[i];
-			}
-			delete[] _data;
-			delete[] _states;
-			_data = new_data;
-			_states = new_states;
-			_capacity = _size;
-		}
-	}
-	void reserve(size_t new_capacity) {
-		if (new_capacity <= _capacity) {
-			return;
-		}
-		T* new_data = new T[new_capacity];
-		State* new_states = new State[new_capacity];
-		std::fill_n(new_states, new_capacity, State::empty);
-		for (size_t i = 0; i < _size; ++i) {
-			new_data[i] = std::move(_data[i]);
-			new_states[i] = _states[i];
-		}
-		delete[] _data;
-		delete[] _states;
-		_data = new_data;
-		_states = new_states;
-		_capacity = new_capacity;
-	}
-	void resize(size_t new_size) {
-		if (new_size == _size) {
-			return;
-		} else if (new_size < _size) { 
-			for (size_t i = new_size; i < _size; ++i) {
-				_states[i] = State::empty;
-			}
-			_size = new_size;
-		}
-		else {
-			size_t new_capacity = new_size + RESERVE;
-			T* new_data = new T[new_capacity];
-			State* new_states = new State[new_capacity];
-			std::fill_n(new_states, new_capacity, State::empty);
-			for (size_t i = 0; i < _size; ++i) {
-				new_data[i] = std::move(_data[i]);
-				new_states[i] = _states[i];
-			}
-			for (size_t i = _size; i < new_size; ++i) {
-				new_data[i] = T(); 
-			}
-			delete[] _data;
-			delete[] _states;
-			_size = new_size;
-			_capacity = new_capacity; 
-		}
-	}
-	void resize(size_t new_size, T& value) {
-
-	}
 	bool operator==(const Tvector<T>& vector) const {
 		if (this->_size != vector._size)  
 			return false;
@@ -289,7 +360,7 @@ public:
 	void assign(size_t count, const T& value) { 
 		for (size_t i = 0; i < _size; ++i) {
 			if (_states[i] == State::busy) {
-				//std::destroy_at(&_data[i]);
+				std::destroy_at(&_data[i]);
 			}
 			_states[i] = State::empty;
 		}
@@ -306,14 +377,21 @@ public:
 	void clear() {
 		for (size_t i = 0; i < _size; ++i) {
 			if (_states[i] == State::busy) {
-				//std::destroy_at(&_data[i]);  
+				std::destroy_at(&_data[i]);  
 			}
 			_states[i] = State::empty;
 		}
 		_size = 0;
 		_deleted = 0;
 	}
-}; 
+
+	void emplace(size_t index, const T& value) {
+		if (index >= _size) {
+			throw std::out_of_range("This index out of range");
+		}
+		_data[index] = std::move(value);
+	}
+};     
 /*
 	void push_front(const T& value);
 	void push_back(const T& value);
