@@ -76,8 +76,7 @@ class Tvector {
     void resize(size_t new_size, const T& value) {
         if (new_size == _size) {
             return;
-        }
-        else if (new_size < _size) {
+        } else if (new_size < _size) {
             for (size_t i = new_size; i < _size; ++i) {
                 if (_states[i] == State::deleted) {
                     _deleted--;
@@ -86,8 +85,7 @@ class Tvector {
                 _states[i] = State::empty;
             }
             _size = new_size;
-        }
-        else {
+        } else {
             size_t new_capacity = new_size + RESERVE;
             T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
             State* new_states = new State[new_capacity];
@@ -126,16 +124,14 @@ class Tvector {
     }
     void shrink_to_fit() {
         if (_size >= _capacity) {
-        }
-        else if (_size == 0) {
+        } else if (_size == 0) {
             delete[] _data;
             delete[] _states;
             _data = nullptr;
             _states = nullptr;
             _capacity = 0;
             _deleted = 0;
-        }
-        else {
+        } else {
             T* new_data = new T[_size];
             State* new_states = new State[_size];
             for (size_t i = 0; i < _size; ++i) {
