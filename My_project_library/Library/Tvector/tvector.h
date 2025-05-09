@@ -8,25 +8,25 @@
 #include <memory>
 #include <algorithm>
 enum State {
-	empty, busy, deleted
+    empty, busy, deleted
 };
 template <class T>
 class Tvector {
-	static_assert(std::is_nothrow_move_constructible_v<T>,
+    static_assert(std::is_nothrow_move_constructible_v<T>,
 		"T must have noexcept move constructor");
-	static_assert(std::is_default_constructible_v<T>,
+    static_assert(std::is_default_constructible_v<T>,
 		"T must be default-constructible");
 private:
-	size_t _size;
-	size_t _capacity;
-	T* _data;
-	State* _states;
-	size_t _deleted;
+    size_t _size;
+    size_t _capacity;
+    T* _data;
+    State* _states;
+    size_t _deleted;
 	void resize(size_t new_size) {
-		if (new_size == _size) {
+        if (new_size == _size) {
 			return;
-		} else if (new_size < _size) {
-			for (size_t i = new_size; i < _size; ++i) {
+        } else if (new_size < _size) {
+            for (size_t i = new_size; i < _size; ++i) {
 				if (_states[i] == State::deleted) {
 					_deleted--;  
 				}
@@ -97,7 +97,7 @@ private:
 					new (new_data + i) T(std::move(_data[i]));
 					new_states[i] = _states[i];
 				}
-				for (size_t i = _size; i < new_size; ++i) {
+                for (size_t i = _size; i < new_size; ++i) {
 					new (new_data + i) T(value);
 					new_states[i] = State::busy;
 				}
