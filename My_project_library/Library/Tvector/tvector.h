@@ -28,26 +28,27 @@ private:
         } else if (new_size < _size) {
             for (size_t i = new_size; i < _size; ++i) {
                 if (_states[i] == State::deleted) {
-                    _deleted--;  
+                    _deleted--;
                 }
-                _data[i].~T();  
+                _data[i].~T();
                 _states[i] = State::empty;
             }
             _size = new_size;
-        } else { 
+        } else {
             size_t new_capacity = new_size + RESERVE;
-            T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
+            T* new_data = static_cast<T*>
+              (::operator new(new_capacity * sizeof(T)));
             State* new_states = new State[new_capacity];
             for (size_t i = new_size; i < new_capacity; ++i) {
                 new_states[i] = State::empty;
             }
             try {
                 for (size_t i = 0; i < _size; ++i) {
-                    new (new_data + i) T(std::move(_data[i]));  
+                    new (new_data + i) T(std::move(_data[i]));
                     new_states[i] = _states[i];
                 }
                 for (size_t i = _size; i < new_size; ++i) {
-                    new (new_data + i) T(); 
+                    new (new_data + i) T();
                     new_states[i] = State::busy;
                 }
                 for (size_t i = 0; i < _size; ++i) {
@@ -121,7 +122,7 @@ private:
                 throw;
             }
         }
-    } 
+    }
     void shrink_to_fit() {
         if (_size >= _capacity) {
 
@@ -167,8 +168,9 @@ private:
     }
     inline bool is_full() const noexcept {
         return _size == _capacity;
-    } 
-public:
+    }
+
+ public:
     Tvector() noexcept {
         _size = 0;
         _capacity = 0;
@@ -313,11 +315,11 @@ public:
     }
 
     bool operator==(const Tvector<T>& vector) const {
-        if (this->_size != vector._size)  
+        if (this->_size != vector._size)
             return false;
 
         for (size_t i = 0; i < _size; ++i) {
-            if ((*this)[i] != vector[i])     
+            if ((*this)[i] != vector[i])
                 return false;
         }
         return true;
@@ -345,7 +347,7 @@ public:
         return *this;
     }
     inline const T& operator[](size_t index) const {
-        return _data[index]; 
+        return _data[index];
     }
     inline T& operator[](size_t index) {
         return _data[index];
@@ -363,7 +365,7 @@ public:
     const T& at(size_t index) const {
         return const_cast<Tvector*>(this)->at(index);
     }
-    void assign(size_t count, const T& value) { 
+    void assign(size_t count, const T& value) {
         for (size_t i = 0; i < _size; ++i) {
             if (_states[i] == State::busy) {
                 std::destroy_at(&_data[i]);
@@ -374,7 +376,7 @@ public:
             reserve(count);
         }
         for (size_t i = 0; i < count; ++i) {
-            new (&_data[i]) T(value); 
+            new (&_data[i]) T(value);
             _states[i] = State::busy;
         }
         _size = count;
@@ -383,13 +385,13 @@ public:
     void clear() {
         for (size_t i = 0; i < _size; ++i) {
             if (_states[i] == State::busy) {
-                std::destroy_at(&_data[i]);  
+                std::destroy_at(&_data[i]);
             }
             _states[i] = State::empty;
         }
         _size = 0;
         _deleted = 0;
-    }   
+    }
     void emplace(size_t index, const T& value) {
         if (index >= _size) {
             throw std::out_of_range("Index out of range");
@@ -400,4 +402,4 @@ public:
         _data[index] = value;
         _states[index] = State::busy;
     }
-};     
+};
