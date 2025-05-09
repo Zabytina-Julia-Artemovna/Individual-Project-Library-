@@ -390,12 +390,15 @@ public:
 		_size = 0;
 		_deleted = 0;
 	}
-
 	void emplace(size_t index, const T& value) {
 		if (index >= _size) {
-			throw std::out_of_range("This index out of range");
+			throw std::out_of_range("Index out of range");
 		}
-		_data[index] = std::move(value);
+		if (_states[index] == State::deleted) {
+			--_deleted;
+		}
+		_data[index] = value;
+		_states[index] = State::busy;
 	}
 };     
 /*
