@@ -401,8 +401,3 @@ public:
 		_states[index] = State::busy;
 	}
 };     
-/*
-	void push_front(const T& value);
-	void push_back(const T& value);
-	void insert(int position, const T& value);
-	*/
