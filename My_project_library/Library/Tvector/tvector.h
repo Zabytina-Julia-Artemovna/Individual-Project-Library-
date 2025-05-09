@@ -1,3 +1,4 @@
+// Copyright 2025 Zabytina Julia. All rights reserved.
 #pragma once
 #define RESERVE 256
 #include <stdexcept>
