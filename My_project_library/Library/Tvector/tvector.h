@@ -38,6 +38,9 @@ private:
 			size_t new_capacity = new_size + RESERVE;
 			T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
 			State* new_states = new State[new_capacity];
+			for (size_t i = new_size; i < new_capacity; ++i) {
+				new_states[i] = State::empty;
+			}
 			try {
 				for (size_t i = 0; i < _size; ++i) {
 					new (new_data + i) T(std::move(_data[i]));  
@@ -86,6 +89,9 @@ private:
 			size_t new_capacity = new_size + RESERVE;
 			T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
 			State* new_states = new State[new_capacity];
+			for (size_t i = new_size; i < new_capacity; ++i) {
+				new_states[i] = State::empty;
+			}
 			try {
 				for (size_t i = 0; i < _size; ++i) {
 					new (new_data + i) T(std::move(_data[i]));
