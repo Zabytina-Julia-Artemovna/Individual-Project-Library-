@@ -87,7 +87,8 @@ class Tvector {
             _size = new_size;
         } else {
             size_t new_capacity = new_size + RESERVE;
-            T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
+            T* new_data = static_cast<T*>
+                (::operator new(new_capacity * sizeof(T)));
             State* new_states = new State[new_capacity];
             for (size_t i = new_size; i < new_capacity; ++i) {
                 new_states[i] = State::empty;
@@ -219,8 +220,7 @@ class Tvector {
             if (i < _size) {
                 _data[i] = data[i];
                 _states[i] = State::busy;
-            }
-            else {
+            } else {
                 _states[i] = State::empty;
             }
         }
@@ -353,7 +353,8 @@ class Tvector {
             throw std::out_of_range("Index out of range");
         }
         if (_states[index] != busy) {
-            throw std::logic_error("Element at this index is not available (deleted or empty)");
+            throw std::logic_error
+              ("Element at this index is not available (deleted or empty)");
         }
         return _data[index];
     }
