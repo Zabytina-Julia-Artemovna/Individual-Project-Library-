@@ -174,7 +174,7 @@ class Tvector {
         _states = nullptr;
         _deleted = 0;
     }
-    Tvector(size_t size) {
+    explicit Tvector(size_t size) {
         _size = size;
         _capacity = size + RESERVE;
         try {
@@ -196,8 +196,7 @@ class Tvector {
             _states[i] = i < _size ? State::busy : State::empty;
         }
     }
-    Tvector(T* data, size_t size)
-    {
+    Tvector(T* data, size_t size) {
         if (size > 0 && data == nullptr) {
             throw std::invalid_argument("Null data pointer with non-zero size");
         }
