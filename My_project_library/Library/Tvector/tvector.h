@@ -399,4 +399,62 @@ class Tvector {
         _data[index] = value;
         _states[index] = State::busy;
     }
+    friend void shell_sort(Tvector<T>& object) noexcept;
+    friend void shuffle(Tvector<T>& object) noexcept;
 };
+template <class T>
+void shell_sort(Tvector<T>& object) noexcept {
+    if (object._size < 2 || object._data == nullptr || object._states == nullptr) {
+        return;
+    }
+    size_t h = 1;
+    while (h < object._size / 3) {
+        h = 3 * h + 1;
+    }
+    while (h >= 1) {
+        for (size_t i = h; i < object._size; ++i) {
+            if (object._states[i] == State::deleted) {
+                continue;
+            }
+
+            for (size_t j = i; j >= h; j -= h) {
+                size_t previous = j - h;
+                if (object._states[previous] == State::deleted) {
+                    continue;
+                }
+
+                if (object._data[j] < object._data[previous]) {
+                    std::swap(object._data[j], object._data[previous]);
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        h /= 3;
+    }
+}
+template <class T>
+void shuffle(Tvector<T>& object) noexcept {
+    if (object._size < 2 || object._data == nullptr || object._states == nullptr) {
+        return;
+    }
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::vector<size_t> valid_indices;
+    for (size_t i = 0; i < object._size; ++i) {
+        if (object._states[i] != State::deleted) {
+            valid_indices.push_back(i);
+        }
+    }
+    if (valid_indices.size() < 2) {
+        return;
+    }
+    for (size_t i = valid_indices.size() - 1; i > 0; --i) {
+        std::uniform_int_distribution<size_t> dist(0, i);
+        size_t j = dist(gen);
+        std::swap(object._data[valid_indices[i]], object._data[valid_indices[j]]);
+        std::swap(object._states[valid_indices[i]], object._states[valid_indices[j]]);
+    }
+}
