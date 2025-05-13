@@ -2,6 +2,7 @@
 #pragma once
 #define RESERVE 256
 #include <stdexcept>
+#include <vector>
 #include <exception>
 #include <random>
 #include <iostream>
@@ -401,10 +402,15 @@ class Tvector {
     }
     friend void shell_sort(Tvector<T>& object) noexcept;
     friend void shuffle(Tvector<T>& object) noexcept;
+
+    friend size_t found_first_element(const Tvector<T>& object, const T& value);
+    friend size_t found_last_element(const Tvector<T>& object, const T& value);
+    friend size_t found_count_of_all_suitable_elements(const Tvector<T>& object, const T& value);
 };
 template <class T>
 void shell_sort(Tvector<T>& object) noexcept {
-    if (object._size < 2 || object._data == nullptr || object._states == nullptr) {
+    if (object._size < 2 || object._data == nullptr 
+       || object._states == nullptr) {
         return;
     }
     size_t h = 1;
@@ -416,7 +422,6 @@ void shell_sort(Tvector<T>& object) noexcept {
             if (object._states[i] == State::deleted) {
                 continue;
             }
-
             for (size_t j = i; j >= h; j -= h) {
                 size_t previous = j - h;
                 if (object._states[previous] == State::deleted) {
@@ -425,8 +430,7 @@ void shell_sort(Tvector<T>& object) noexcept {
 
                 if (object._data[j] < object._data[previous]) {
                     std::swap(object._data[j], object._data[previous]);
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -457,4 +461,41 @@ void shuffle(Tvector<T>& object) noexcept {
         std::swap(object._data[valid_indices[i]], object._data[valid_indices[j]]);
         std::swap(object._states[valid_indices[i]], object._states[valid_indices[j]]);
     }
+}
+template <class T>
+size_t found_first_element(const Tvector<T>& object, const T& value) {
+    size_t result = 0;
+    for (size_t i = 0; i < object._size; i++) {
+        if (object._states[i] == State::deleted) {
+            continue;
+        } else if (object._data[i] == value && object._states[i] == State::busy) {
+            return result+1;
+        }
+        result++;
+    }
+    return 0; 
+}
+template <class T>
+size_t found_last_element(const Tvector<T>& object, const T& value) {
+    size_t last_position = 0;  
+    size_t visible_position = 0;
+    for (size_t i = 0; i < object._size; ++i) {
+        if (object._states[i] != State::deleted) {
+            visible_pos++;
+            if (object._data[i] == value && object._states[i] == State::busy) {
+                last_position = visible_position;  
+            }
+        }
+    }
+    return last_position;
+}
+template <class T> 
+size_t found_count_of_all_suitable_elements(const Tvector<T>& object, const T& value) {
+    size_t count = 0;
+    for (size_t i = 0; i < object._size; ++i) {
+        if (object._data[i] == value && object._states[i] == State::busy) {
+            count++;
+        }
+    }
+    return count;
 }
