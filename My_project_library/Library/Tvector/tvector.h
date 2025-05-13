@@ -400,9 +400,24 @@ class Tvector {
         _data[index] = value;
         _states[index] = State::busy;
     }
+    std::ostream& operator<<(std::ostream& out, const Tvector<T>& object) {
+        out << "[";
+        size_t busy_count = 0;
+        for (size_t i = 0; i < object._size; ++i) {
+            if (object._states[i] == State::busy) {
+                if (busy_count > 0) {
+                    out << ", ";
+                    busy_count++;
+                }
+                out << object._data[i];
+            }
+        }
+        out << "]";
+        return out;
+    }
     friend void shell_sort(Tvector<T>& object) noexcept;
     friend void shuffle(Tvector<T>& object) noexcept;
-
+    
     friend size_t found_first_element(const Tvector<T>& object, const T& value);
     friend size_t found_last_element(const Tvector<T>& object, const T& value);
     friend size_t found_count_of_all_suitable_elements(const Tvector<T>& object, const T& value);
