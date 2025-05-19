@@ -1,6 +1,5 @@
 // Copyright 2025 Zabytina Julia. All rights reserved.
 #pragma once
-#define RESERVE 256
 #include <stdexcept>
 #include <vector>
 #include <exception>
@@ -9,17 +8,13 @@
 #include <utility>
 #include <memory>
 #include <algorithm>
-enum State {
-    empty, busy, deleted
-};
 template <class T>
 class Tvector {
-    static_assert(std::is_nothrow_move_constructible_v<T>,
-        "T must have noexcept move constructor");
-    static_assert(std::is_default_constructible_v<T>,
-        "T must be default-constructible");
-
  private:
+     static constexpr size_t RESERVE_MEMORY = 15;
+     enum State {
+         empty, busy, deleted
+     };
     size_t _size;
     size_t _capacity;
     T* _data;
@@ -170,22 +165,18 @@ class Tvector {
     }
 
  public:
-    Tvector() noexcept {
+    Tvector()  noexcept {// список иниц
         _size = 0;
         _capacity = 0;
         _data = nullptr;
         _states = nullptr;
         _deleted = 0;
     }
-    explicit Tvector(size_t size) {
+    Tvector(size_t size) {
         _size = size;
         _capacity = size + RESERVE;
-        try {
-            _data = new T[_capacity];
-        }
-        catch (const std::bad_alloc&) {
-            throw;
-        }
+        _data = new T[_capacity];
+        
         try {
             _states = new State[_capacity];
         }
@@ -205,12 +196,7 @@ class Tvector {
         }
         _size = size;
         _capacity = _size + RESERVE;
-        try {
-            _data = new T[_capacity];
-        }
-        catch (const std::bad_alloc&) {
-            throw;
-        }
+        _data = new T[_capacity];
         try {
             _states = new State[_capacity];
         }
@@ -400,27 +386,67 @@ class Tvector {
         _data[index] = value;
         _states[index] = State::busy;
     }
-    std::ostream& operator<<(std::ostream& out, const Tvector<T>& object) {
+    std::ostream& operator<<(std::ostream& out) {
         out << "[";
         size_t busy_count = 0;
-        for (size_t i = 0; i < object._size; ++i) {
-            if (object._states[i] == State::busy) {
+        for (size_t i = 0; i < _size; ++i) {
+            if (_states[i] == State::busy) {
                 if (busy_count > 0) {
                     out << ", ";
                     busy_count++;
                 }
-                out << object._data[i];
+                out << _data[i];
             }
         }
         out << "]";
         return out;
     }
+
+    void push_front(const T& value) {
+        if (_size >= _capacity) {
+            reserve(_capacity + RESERVE_MEMORY);
+        }
+        if (_size > 0) {
+            for (size_t i = _size; i > 0; --i) {
+                _data[i] = std::move(_data[i - 1]);
+                _states[i] = _states[i - 1]; 
+            }
+        }
+        _data[0] = value;
+        _states[0] = State::busy;
+        _size++;
+    }
+    void insert_element(const T& value, size_t position) {
+        if (position > _size) {  
+            throw std::out_of_range("Insert position out of range");
+        }
+        if (_size >= _capacity) {
+            reserve(_capacity + RESERVE_MEMORY);
+        }
+        if (_size > 0) {
+            for (size_t i = _size; i > position; --i) { 
+                _data[i] = std::move(_data[i - 1]);
+                _states[i] = _states[i - 1];
+            }
+        }
+        _data[position] = value;
+        _states[position] = State::busy;
+        _size++;
+    }
+    void push_back(const T& value) {
+        if (_size >= _capacity) {
+            reserve(_capacity + RESERVE_MEMORY);
+        }
+        _data[_size] = value;
+        _states[_size] = State::busy;
+        _size++;
+    }
+
     friend void shell_sort(Tvector<T>& object) noexcept;
     friend void shuffle(Tvector<T>& object) noexcept;
-    
-    friend size_t found_first_element(const Tvector<T>& object, const T& value);
-    friend size_t found_last_element(const Tvector<T>& object, const T& value);
-    friend size_t found_count_of_all_suitable_elements(const Tvector<T>& object, const T& value);
+    friend size_t find_first_element(const Tvector<T>& object, const T& value);
+    friend size_t find_last_element(const Tvector<T>& object, const T& value);
+    friend size_t find_count_of_all_suitable_elements(const Tvector<T>& object, const T& value);
 };
 template <class T>
 void shell_sort(Tvector<T>& object) noexcept {
@@ -478,7 +504,7 @@ void shuffle(Tvector<T>& object) noexcept {
     }
 }
 template <class T>
-size_t found_first_element(const Tvector<T>& object, const T& value) {
+size_t find_first_element(const Tvector<T>& object, const T& value) {
     size_t result = 0;
     for (size_t i = 0; i < object._size; i++) {
         if (object._states[i] == State::deleted) {
@@ -491,21 +517,22 @@ size_t found_first_element(const Tvector<T>& object, const T& value) {
     return 0; 
 }
 template <class T>
-size_t found_last_element(const Tvector<T>& object, const T& value) {
-    size_t last_position = 0;  
-    size_t visible_position = 0;
-    for (size_t i = 0; i < object._size; ++i) {
-        if (object._states[i] != State::deleted) {
-            visible_pos++;
-            if (object._data[i] == value && object._states[i] == State::busy) {
-                last_position = visible_position;  
-            }
+size_t find_last_element(const Tvector<T>& object, const T& value) {
+    size_t last_pos = 0;
+    size_t current_pos = 0;
+    for (size_t i = 0; i < object._size; i++) {
+        if (object._states[i] == State::deleted) {
+            continue;
+        }
+        current_pos++;
+        if (object._data[i] == value && object._states[i] == State::busy) {
+            last_pos = current_pos;
         }
     }
-    return last_position;
+    return last_pos;
 }
 template <class T> 
-size_t found_count_of_all_suitable_elements(const Tvector<T>& object, const T& value) {
+size_t find_count_of_all_suitable_elements(const Tvector<T>& object, const T& value) {
     size_t count = 0;
     for (size_t i = 0; i < object._size; ++i) {
         if (object._data[i] == value && object._states[i] == State::busy) {
