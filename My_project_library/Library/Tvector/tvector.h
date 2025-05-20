@@ -12,6 +12,7 @@ template <class T>
 class Tvector {
  private:
      static constexpr size_t RESERVE_MEMORY = 15;
+     static constexpr size_t MAX_PERSENT_DELETED = 15;
      enum State {
          empty, busy, deleted
      };
@@ -160,12 +161,42 @@ class Tvector {
         _states = new_states;
         _capacity = new_capacity;
     }
+    void compact_storage() {
+        size_t busy_count = 0;
+        for (size_t i = 0; i < _size; ++i) {
+            if (_states[i] == State::busy) {
+                busy_count++;
+            }
+        }
+        size_t new_capacity = busy_count + RESERVE_MEMORY;
+        T* new_data = new T[new_capacity];
+        State* new_states = new State[new_capacity];
+        size_t new_index = 0;
+        for (size_t i = 0; i < _size; ++i) {
+            if (_states[i] == State::busy) {
+                new_data[new_index] = std::move(_data[i]);
+                new_states[new_index] = State::busy;
+                new_index++;
+            }
+        }
+        for (size_t i = 0; i < _size; ++i) {
+            if (_states[i] != State::empty) {
+                _data[i].~T();
+            }
+        }
+        delete[] _data;
+        delete[] _states;
+        _data = new_data;
+        _states = new_states;
+        _capacity = new_capacity;
+        _size = busy_count;
+        _deleted = 0;
+    }
     inline bool is_full() const noexcept {
         return _size == _capacity;
     }
-
  public:
-    Tvector()  noexcept {// список иниц
+    Tvector()  noexcept {
         _size = 0;
         _capacity = 0;
         _data = nullptr;
@@ -174,7 +205,7 @@ class Tvector {
     }
     Tvector(size_t size) {
         _size = size;
-        _capacity = size + RESERVE;
+        _capacity = size + RESERVE_MEMORY;
         _data = new T[_capacity];
         
         try {
@@ -195,7 +226,7 @@ class Tvector {
             throw std::invalid_argument("Null data pointer with non-zero size");
         }
         _size = size;
-        _capacity = _size + RESERVE;
+        _capacity = _size + RESERVE_MEMORY;
         _data = new T[_capacity];
         try {
             _states = new State[_capacity];
@@ -406,28 +437,25 @@ class Tvector {
         if (_size >= _capacity) {
             reserve(_capacity + RESERVE_MEMORY);
         }
-        if (_size > 0) {
-            for (size_t i = _size; i > 0; --i) {
-                _data[i] = std::move(_data[i - 1]);
-                _states[i] = _states[i - 1]; 
-            }
+        for (size_t i = _size; i > 0; --i) {
+            _data[i] = std::move(_data[i - 1]);
+            _states[i] = _states[i - 1];
         }
+
         _data[0] = value;
         _states[0] = State::busy;
         _size++;
     }
-    void insert_element(const T& value, size_t position) {
-        if (position > _size) {  
+    void insert(const T& value, size_t position) {
+        if (position > _size) {
             throw std::out_of_range("Insert position out of range");
         }
         if (_size >= _capacity) {
             reserve(_capacity + RESERVE_MEMORY);
         }
-        if (_size > 0) {
-            for (size_t i = _size; i > position; --i) { 
-                _data[i] = std::move(_data[i - 1]);
-                _states[i] = _states[i - 1];
-            }
+        for (size_t i = _size; i > position; --i) {
+            _data[i] = std::move(_data[i - 1]);
+            _states[i] = _states[i - 1];
         }
         _data[position] = value;
         _states[position] = State::busy;
@@ -442,6 +470,44 @@ class Tvector {
         _size++;
     }
 
+    void pop_back() {
+        if (_size == 0) {
+            return;
+        }
+            _data[_size - 1].~T();
+            _states[_size - 1] = State::empty;
+            _size--;
+    }
+    void erase(size_t position) {
+        if (position >= _size) {
+            throw std::out_of_range("Invalid position");
+        }
+        if (_size != 0) {
+            if (_states[position] == State::busy) {
+                _states[position] = State::deleted;
+                _deleted++;
+            }
+            if (static_cast<float>(_deleted) / _size > MAX_PERCENT_DELETED / 100.0f) {
+                compact_storage();
+            }
+        }
+    }
+    void pop_front() {
+        if (_size == 0) {
+            return;
+        }
+        for (size_t i = 0; i < _size; ++i) {
+            if (_states[i] == State::busy) {
+                _data[i].~T();
+                _states[i] = State::deleted;
+                _deleted++;
+                if (static_cast<float>(_deleted) / _size > MAX_PERCENT_DELETED / 100.0f) {
+                    compact_storage();
+                }
+                return;
+            }
+        }
+    }
     friend void shell_sort(Tvector<T>& object) noexcept;
     friend void shuffle(Tvector<T>& object) noexcept;
     friend size_t find_first_element(const Tvector<T>& object, const T& value);
