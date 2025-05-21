@@ -7,22 +7,12 @@
 *.o
 *.obj
 
-# Precompiled Headers
-*.gch
-*.pch
-
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-*.smod
-
 # Compiled Static libraries
-*.lai
-*.la
 *.a
 *.lib
 
@@ -30,19 +20,7 @@
 *.exe
 *.out
 *.app
-# Visual Studio
-.vs/**
-Debug/
-Release/
-x64/
-*.sln
-*.vcxproj.user
-*.vcxproj.filters
-*.vcxproj
-*.suo
-*.user
-*.aps
+
+# Отладка (можно игнорировать)
 *.pdb
 *.opendb
-# .gitignore
-.vs/
