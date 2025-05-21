@@ -12,7 +12,7 @@ template <class T>
 class Tvector {
  private:
      static constexpr size_t RESERVE_MEMORY = 15;
-     static constexpr size_t MAX_PERSENT_DELETED = 15;
+     static constexpr size_t MAX_PERCENT_DELETED = 15;
      enum State {
          empty, busy, deleted
      };
