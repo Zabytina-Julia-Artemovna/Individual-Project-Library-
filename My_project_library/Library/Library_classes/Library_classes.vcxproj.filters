@@ -14,18 +14,4 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="passport_data.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="book.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="post.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
 </Project>
