@@ -21,7 +21,6 @@
 *.out
 *.app
 
-# Отладка (можно игнорировать)
+# Debugging
 *.pdb
 *.opendb
-*.vcxproj.user
