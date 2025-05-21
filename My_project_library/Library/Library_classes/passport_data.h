@@ -6,7 +6,8 @@ private:
     size_t _passport_series;
 public:
     Passport() : _passport_number(0), _passport_series(0) {}
-    Passport(size_t number, size_t series) : _passport_number(number),
+    Passport(size_t number, size_t series): 
+        _passport_number(number),
         _passport_series(series) {}
     Passport(const Passport& other) = default;
     size_t get_number() const {
