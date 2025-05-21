@@ -24,6 +24,5 @@
 # Отладка (можно игнорировать)
 *.pdb
 *.opendb
-*.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
