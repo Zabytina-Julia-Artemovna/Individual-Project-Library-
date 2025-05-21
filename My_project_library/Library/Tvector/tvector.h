@@ -1,5 +1,6 @@
 // Copyright 2025 Zabytina Julia. All rights reserved.
 #pragma once
+#include <cstddef> 
 #include <stdexcept>
 #include <vector>
 #include <exception>
