@@ -8,7 +8,8 @@ private:
 
 public:
     Post() : _post_name("Unknown"), _salary(0) {}
-    Post(const std::string& post_name, size_t salary) : _post_name(post_name),
+    Post(const std::string& post_name, size_t salary): 
+        _post_name(post_name),
         _salary(salary) {}
     Post(const Post& other) = default;
     const std::string& get_post_name() const {
