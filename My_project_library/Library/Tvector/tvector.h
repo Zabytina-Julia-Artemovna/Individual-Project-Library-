@@ -290,6 +290,13 @@ class Tvector {
         return _data;
     }
 
+    inline const T* states() const noexcept {
+        return _states;
+    }
+    inline T* states() noexcept {
+        return _states;
+    }
+
     inline T& front() noexcept {
         if (_size == 0) {
             throw std::out_of_range("Vector is empty");
@@ -317,6 +324,9 @@ class Tvector {
 
     size_t size() const noexcept {
         return _size;
+    }
+    size_t deleted() const noexcept {
+        return _deleted;
     }
     size_t capacity() const noexcept {
         return _capacity;
