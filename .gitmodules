@@ -1,0 +1,9 @@
+[submodule "Libs/Tvector"]
+    path = Libs/Tvector
+    url = https://github.com/Zabytina-Julia-Artemovna/Individual-Project-Library-.git
+    branch = tvector
+	
+[submodule "My_project_library/Library/Libs/Tvector"]
+	path = My_project_library/Library/Libs/Tvector
+	url = https://github.com/Zabytina-Julia-Artemovna/Individual-Project-Library-.git
+	branch = tvector
