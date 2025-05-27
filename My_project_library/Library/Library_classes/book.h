@@ -25,7 +25,7 @@ public:
         _publishing_house(publishing_house),
         _book_name(book_name) {}
     Book(const Book& other) = default;
-    size_t get_book_id() const {
+    std::string get_book_id() const {
         return _book_id;
     }
     size_t get_count_of_books() const {
@@ -47,9 +47,6 @@ public:
     }
     State get_state() const {
         return _current_state;
-    }
-    void set_book_id(size_t book_id) {
-        _book_id = book_id;
     }
     void set_year_of_publication(size_t year_of_publication) {
         _year_of_publication = year_of_publication;
