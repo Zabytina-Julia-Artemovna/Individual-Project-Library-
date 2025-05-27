@@ -282,11 +282,10 @@ class Tvector {
     inline bool is_empty() const noexcept {
         return _size == 0;
     }
-
-    inline const T* data() const noexcept {
+    inline const T* get_data() const noexcept {
         return _data;
     }
-    inline T* data() noexcept {
+    inline T* get_data() noexcept {
         return _data;
     }
 
@@ -315,10 +314,13 @@ class Tvector {
         return _data[_size - 1];
     }
 
-    size_t size() const noexcept {
+    size_t get_size() const noexcept {
         return _size;
     }
-    size_t capacity() const noexcept {
+    size_t get_deleted() const noexcept {
+        return _deleted;
+    }
+    size_t get_capacity() const noexcept {
         return _capacity;
     }
 
