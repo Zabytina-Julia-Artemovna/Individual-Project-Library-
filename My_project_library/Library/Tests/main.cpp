@@ -115,13 +115,30 @@ bool test_6_get_data() {
     Tvector<int> vector(data, size);
     int* data_ptr = data; 
     bool expected_result = true;
-    bool actual_result = data[0] ==
-        vector.get_data()[0]
+    bool different_pointers = data_ptr != vector.get_data();
+    bool same_data = 
+        data[0] == vector.get_data()[0]
         && data[1] == vector.get_data()[1]
         && data[2] == vector.get_data()[2];
+    bool actual_result = different_pointers && same_data;
     return TestSystem::check(expected_result, actual_result);
 }
-
+bool test_7_front() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    bool expected_result = true;
+    bool actual_result = vector.front() == vector.get_data()[0];
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_8_back() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    bool expected_result = true;
+    bool actual_result = vector.back() == vector.get_data()[vector.get_size() - 1];
+    return TestSystem::check(expected_result, actual_result);
+}
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
@@ -132,6 +149,9 @@ int main() {
     TestSystem::start_test(test_4_copy_constructor, " test_4_copy_constructor");
     TestSystem::start_test(test_5_is_empty, " test_5_is_empty");
     TestSystem::start_test(test_6_get_data, " test_6_get_data");
+    TestSystem::start_test(test_7_front, " test_7_front");
+    TestSystem::start_test(test_8_back, " test_8_back");
+
 
     TestSystem::print_final_info();
     system("pause");
