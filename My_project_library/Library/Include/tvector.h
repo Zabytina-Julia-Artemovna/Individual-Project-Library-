@@ -288,6 +288,12 @@ class Tvector {
     inline T* get_data() noexcept {
         return _data;
     }
+    inline const T* get_states() const noexcept {
+        return _states;
+    }
+    inline T* get_states() noexcept {
+        return _states;
+    }
 
     inline T& front() noexcept {
         if (_size == 0) {
