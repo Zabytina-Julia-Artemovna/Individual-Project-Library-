@@ -127,19 +127,44 @@ bool test_7_front() {
     int data[3] = { 1,2,3 };
     size_t size = 3;
     Tvector<int> vector(data, size);
-    bool expected_result = true;
-    bool actual_result = vector.front() == vector.get_data()[0];
+    bool expected_result = vector.get_data()[0];
+    bool actual_result = vector.front();
     return TestSystem::check(expected_result, actual_result);
 }
 bool test_8_back() {
     int data[3] = { 1,2,3 };
     size_t size = 3;
     Tvector<int> vector(data, size);
-    bool expected_result = true;
-    bool actual_result = vector.back() == vector.get_data()[vector.get_size() - 1];
+    bool expected_result = vector.get_data()[vector.get_size() - 1];
+    bool actual_result = vector.back();
     return TestSystem::check(expected_result, actual_result);
 }
-
+bool test_9_get_size() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    bool expected_result = size;
+    bool actual_result = vector.get_size();
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_10_get_deleted() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    size_t deleted = 0;
+    Tvector<int> vector(data, size);
+    bool expected_result = deleted;
+    bool actual_result = vector.get_deleted();
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_11_get_capacity() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    size_t capacity = 18;
+    Tvector<int> vector(data, size);
+    bool expected_result = capacity;
+    bool actual_result = vector.get_capacity();
+    return TestSystem::check(expected_result, actual_result);
+}
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
@@ -152,6 +177,11 @@ int main() {
     TestSystem::start_test(test_6_get_data, " test_6_get_data");
     TestSystem::start_test(test_7_front, " test_7_front");
     TestSystem::start_test(test_8_back, " test_8_back");
+    TestSystem::start_test(test_9_get_size, " test_9_get_size");
+    TestSystem::start_test(test_10_get_deleted, " test_10_get_deleted");
+    TestSystem::start_test(test_11_get_capacity, " test_11_get_capacity");
+
+
 
 
     TestSystem::print_final_info();
