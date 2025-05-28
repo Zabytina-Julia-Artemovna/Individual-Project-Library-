@@ -25,3 +25,43 @@
 *.pdb
 *.opendb
 *.vcxproj.user
+
+## Игнорировать build-директории
+x64/
+x86/
+Debug/
+Release/
+
+## Игнорировать пользовательские файлы и настройки
+*.user
+*.suo
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.db
+*.opendb
+
+## for cppCLRWinforms
+*.exe
+*.dll
+*.ilk
+*.lib
+*.exp
+*.obj
+*.tlog
+*.log
+*.idb
+*.pdb
+*.ipch
+*.bsc
+*.sbr
+*.manifest
+*.res
+*.iobj
+*.ipdb
+
+## for cppCLRWinforms
+.vs/
+.vscode/
