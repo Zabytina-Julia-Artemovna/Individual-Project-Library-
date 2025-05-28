@@ -66,11 +66,21 @@ bool test_1_default_constructor() {
         && vector.get_states() == nullptr;
     return TestSystem::check(expected_result, actual_result);
 }
+bool test_2_constructor_with_size() {
+    Tvector<int> vector(10);
+    bool expected_result = true;
+    bool actual_result =
+        vector.get_size() == 10
+        && vector.get_capacity() == 25;
+    return TestSystem::check(expected_result, actual_result);
+}
+
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
     set_color(7, 0);
     TestSystem::start_test(test_1_default_constructor, " test_1_default_constructor");
+    TestSystem::start_test(test_2_constructor_with_size, " test_2_constructor_with_size");
 
     TestSystem::print_final_info();
     system("pause");
