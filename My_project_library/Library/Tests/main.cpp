@@ -67,20 +67,50 @@ bool test_1_default_constructor() {
     return TestSystem::check(expected_result, actual_result);
 }
 bool test_2_constructor_with_size() {
-    Tvector<int> vector(10);
+    size_t size = 10;
+    Tvector<int> vector(size);
     bool expected_result = true;
     bool actual_result =
-        vector.get_size() == 10
-        && vector.get_capacity() == 25;
+        vector.get_size() == size
+        && vector.get_capacity() == 25
+        && vector.get_data() != nullptr
+        && vector.get_states() != nullptr
+        && vector.get_deleted() == 0;
     return TestSystem::check(expected_result, actual_result);
 }
-
+bool test_3_constructor_with_array_and_size() {
+    int data[3] = {1,2,3};
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    bool expected_result = true;
+    bool actual_result =
+        vector.get_size() == size
+        && vector.get_capacity() == 18
+        && vector.get_data() != nullptr
+        && vector.get_states() != nullptr
+        && vector.get_data()[0] == data[0]
+        && vector.get_data()[1] == data[1]
+        && vector.get_data()[2] == data[2]
+        && vector.get_deleted() == 0;
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_4_copy_constructor() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> other_vector (data, size);
+    Tvector<int> new_vector(other_vector);
+    bool expected_result = true;
+    bool actual_result = other_vector == new_vector;
+    return TestSystem::check(expected_result, actual_result);
+}
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
     set_color(7, 0);
     TestSystem::start_test(test_1_default_constructor, " test_1_default_constructor");
     TestSystem::start_test(test_2_constructor_with_size, " test_2_constructor_with_size");
+    TestSystem::start_test(test_3_constructor_with_array_and_size, " test_3_constructor_with_array_and_size");
+    TestSystem::start_test(test_4_copy_constructor, " test_4_copy_constructor");
 
     TestSystem::print_final_info();
     system("pause");
