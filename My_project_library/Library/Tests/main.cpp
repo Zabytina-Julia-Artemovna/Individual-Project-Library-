@@ -62,7 +62,8 @@ bool test_1_default_constructor() {
         vector.get_size() == 0
         && vector.get_deleted() == 0
         && vector.get_capacity() == 0
-        && vector.get_data() == nullptr;
+        && vector.get_data() == nullptr
+        && vector.get_states() == nullptr;
     return TestSystem::check(expected_result, actual_result);
 }
 int main() {
