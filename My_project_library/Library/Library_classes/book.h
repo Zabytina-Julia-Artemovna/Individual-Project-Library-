@@ -14,7 +14,7 @@ private:
     std::string _book_name;
     State _current_state;
 public:
-    Book(size_t count_of_books, size_t year_of_publication,
+    Book(size_t year_of_publication,
         const std::string& author, const std::string& language,
         const std::string& publishing_house, const std::string& book_name) :
         _book_id(book_name + "_" + author),
@@ -27,8 +27,6 @@ public:
     Book(const Book& other) = default;
     std::string get_book_id() const {
         return _book_id;
-    }
-    size_t get_count_of_books() const {
     }
     size_t get_year_of_publication() const {
         return _year_of_publication;
