@@ -56,7 +56,7 @@ namespace TestSystem {
     }
 };
 bool test_1_default_constructor() {
-    Tvector<int> vector{};
+    Tvector<int> vector;
     bool expected_result = true;
     bool actual_result =
         vector.get_size() == 0
@@ -97,12 +97,31 @@ bool test_3_constructor_with_array_and_size() {
 bool test_4_copy_constructor() {
     int data[3] = { 1,2,3 };
     size_t size = 3;
-    Tvector<int> other_vector (data, size);
-    Tvector<int> new_vector(other_vector);
+    Tvector<int> old_vector (data, size);
+    Tvector<int> new_vector(old_vector);
     bool expected_result = true;
-    bool actual_result = other_vector == new_vector;
+    bool actual_result = old_vector == new_vector;
     return TestSystem::check(expected_result, actual_result);
 }
+bool test_5_is_empty() {
+    Tvector<int> vector;
+    bool expected_result = true;
+    bool actual_result = vector.is_empty();
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_6_get_data() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    int* data_ptr = data; 
+    bool expected_result = true;
+    bool actual_result = data[0] ==
+        vector.get_data()[0]
+        && data[1] == vector.get_data()[1]
+        && data[2] == vector.get_data()[2];
+    return TestSystem::check(expected_result, actual_result);
+}
+
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
@@ -111,6 +130,8 @@ int main() {
     TestSystem::start_test(test_2_constructor_with_size, " test_2_constructor_with_size");
     TestSystem::start_test(test_3_constructor_with_array_and_size, " test_3_constructor_with_array_and_size");
     TestSystem::start_test(test_4_copy_constructor, " test_4_copy_constructor");
+    TestSystem::start_test(test_5_is_empty, " test_5_is_empty");
+    TestSystem::start_test(test_6_get_data, " test_6_get_data");
 
     TestSystem::print_final_info();
     system("pause");
