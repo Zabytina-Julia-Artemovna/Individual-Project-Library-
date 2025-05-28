@@ -24,7 +24,6 @@
 # Debugging
 *.pdb
 *.opendb
-*.vcxproj.user
 
 ## Игнорировать build-директории
 x64/
@@ -33,7 +32,6 @@ Debug/
 Release/
 
 ## Игнорировать пользовательские файлы и настройки
-*.user
 *.suo
 *.aps
 *.ncb
