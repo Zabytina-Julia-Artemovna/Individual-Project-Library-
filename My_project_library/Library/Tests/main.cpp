@@ -139,6 +139,7 @@ bool test_8_back() {
     bool actual_result = vector.back() == vector.get_data()[vector.get_size() - 1];
     return TestSystem::check(expected_result, actual_result);
 }
+
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
