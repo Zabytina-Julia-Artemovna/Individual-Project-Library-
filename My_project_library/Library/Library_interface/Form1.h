@@ -1,4 +1,9 @@
 #pragma once
+#include "../Include/tvector.h"
+#include "../Library_classes/book.h"
+#include "../Library_classes/fio.h"
+#include "../Library_classes/post.h"
+#include "../Library_classes/passport_data.h"
 
 namespace CppCLRWinFormsProject {
 
@@ -8,7 +13,7 @@ namespace CppCLRWinFormsProject {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
+	
 	/// <summary>
 	/// Summary for Form1
 	/// </summary>
@@ -118,7 +123,7 @@ namespace CppCLRWinFormsProject {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(364, 456);
+			this->button1->Location = System::Drawing::Point(407, 392);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(176, 100);
 			this->button1->TabIndex = 5;
@@ -128,18 +133,19 @@ namespace CppCLRWinFormsProject {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(24, 528);
+			this->button2->Location = System::Drawing::Point(35, 428);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(176, 100);
 			this->button2->TabIndex = 6;
 			this->button2->Text = L"Войти как заведующий библиотеки";
 			this->button2->UseVisualStyleBackColor = true;
+			this->button2->Click += gcnew System::EventHandler(this, &Form1::button2_Click);
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(784, 661);
+			this->ClientSize = System::Drawing::Size(880, 751);
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->textBox2);
@@ -166,7 +172,7 @@ namespace CppCLRWinFormsProject {
 				MessageBox::Show("Неверный пароль", "Ошибка");
 			}
 		}
-		if (textBox1->Text == "librarian_123" || textBox2->Text == "qwerty") {
+		if (textBox1->Text == "librarian_123" && textBox2->Text == "qwerty") {
 			for each (Control ^ control in this->Controls)
 			{
 				control->Visible = false;
@@ -178,6 +184,7 @@ namespace CppCLRWinFormsProject {
 			button_readers->Size = Drawing::Size(200, 50);
 			button_readers->Font = gcnew Drawing::Font("Microsoft Sans Serif", 12);
 			this->Controls->Add(button_readers);
+			button_readers->Click += gcnew EventHandler(this, &Form1::button_readers_Click);
 
 			Button^ button_books = gcnew Button();
 			button_books->Text = "Книги";
@@ -187,23 +194,24 @@ namespace CppCLRWinFormsProject {
 			this->Controls->Add(button_books);
 			button_books->Click += gcnew EventHandler(this, &Form1::button_books_Click);
 
-
 			Button^ button_staff = gcnew Button();
 			button_staff->Text = "Сотрудники";
 			button_staff->Location = Point(300, 290);
 			button_staff->Size = Drawing::Size(200, 50);
 			button_staff->Font = gcnew Drawing::Font("Microsoft Sans Serif", 12);
 			this->Controls->Add(button_staff);
-		}
-	}
-		   void button_books_Click(Object^ sender, EventArgs^ e) {
-			   Button^ button = gcnew Button();
-			   button->Text = "Книги";
-			   button->Location = Point(300, 220);
-			   button->Size = Drawing::Size(200, 50);
-			   button->Font = gcnew Drawing::Font("Microsoft Sans Serif", 12);
-			   this->Controls->Add(button);
-		   }
+			button_staff->Click += gcnew EventHandler(this, &Form1::button_staff_Click);
 
-	};
+		}
+	} 
+		   void button_books_Click(Object^ sender, EventArgs^ e)
+		   {
+			   
+		   }
+		   void button_readers_Click(Object^ sender, EventArgs^ e) {
+		   }
+		   void button_staff_Click(Object^ sender, EventArgs^ e) {
+		   }
+	
+};
 }
