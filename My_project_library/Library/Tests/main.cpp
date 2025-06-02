@@ -200,7 +200,7 @@ bool test_15_not_ñomparison_operator() {
     bool expected_result = true;
     bool actual_result = vector1 != vector2;
     return TestSystem::check(expected_result, actual_result);
-} //
+} 
 bool test_16_operator_assign() {
     int data1[3] = { 1,2,3 };
     size_t size1 = 3;
@@ -239,6 +239,85 @@ bool test_19_assign() {
     Tvector<int> actual_result = vector1;
     return TestSystem::check(expected_result, actual_result);
 }
+bool test_20_clear() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    size_t expected_result = true;
+    vector.clear();
+    size_t actual_result = vector.get_size() == 0
+        && vector.get_deleted() == 0;
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_21_emplace(){
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    vector.emplace(2, 100);
+    int expected_result = 100;
+    int actual_result = vector[2];
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_22_push_front() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    vector.push_front(200);
+    int expected_result = 200;
+    int actual_result = vector[0];
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_23_insert() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    vector.insert(35, 1);
+    int expected_result = 35;
+    int actual_result = vector[1];
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_24_push_back() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    vector.push_back(400);
+    int expected_result = 400;
+    int actual_result = vector[3];
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_25_pop_back() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    vector.pop_back();
+    int expected_result = true;
+    int actual_result = vector.get_size() == 2
+        && vector[0] == 1
+        && vector[1] == 2;
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_26_erase() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    vector.erase(1);
+    int expected_result = true;
+    int actual_result = vector.get_size() == 2
+        && vector[0] == 1
+        && vector[1] == 3;
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_27_pop_front() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    vector.pop_front();
+    int expected_result = true;
+    int actual_result = vector.get_size() == 2
+        && vector[0] == 2
+        && vector[1] == 3;
+    return TestSystem::check(expected_result, actual_result);
+}
 
 int main() {
     set_color(11, 0);
@@ -263,9 +342,14 @@ int main() {
     TestSystem::start_test(test_17_operator_staples, " test_17_operator_staples");
     TestSystem::start_test(test_18_at, " test_18_at");
     TestSystem::start_test(test_19_assign, " test_19_assign");
+    TestSystem::start_test(test_20_clear, " test_20_clear");
+    TestSystem::start_test(test_21_emplace, " test_21_emplace");
+    TestSystem::start_test(test_22_push_front, " test_22_push_front");
+    TestSystem::start_test(test_23_insert, " test_23_insert");
+    TestSystem::start_test(test_24_push_back, " test_24_push_back");
 
     
-
+    
     TestSystem::print_final_info();
     system("pause");
 
