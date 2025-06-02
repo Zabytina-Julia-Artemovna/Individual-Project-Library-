@@ -190,6 +190,55 @@ bool test_14_ñomparison_operator() {
     bool actual_result = vector1 == vector2;
     return TestSystem::check(expected_result, actual_result);
 }
+bool test_15_not_ñomparison_operator() {
+    int data1[3] = { 1,2,3 };
+    size_t size1 = 3;
+    int data2[4] = { 1,2,3,4 };
+    size_t size2 = 4;
+    Tvector<int> vector1(data1, size1);
+    Tvector<int> vector2(data2, size2);
+    bool expected_result = true;
+    bool actual_result = vector1 != vector2;
+    return TestSystem::check(expected_result, actual_result);
+} //
+bool test_16_operator_assign() {
+    int data1[3] = { 1,2,3 };
+    size_t size1 = 3;
+    int data2[4] = { 1,2,3,4 };
+    size_t size2 = 4;
+    Tvector<int> vector1(data1, size1);
+    Tvector<int> vector2(data2, size2);
+    Tvector<int> expected_result = true;
+    vector1 = vector2;
+    Tvector<int> actual_result = vector1 == vector2;
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_17_operator_staples() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    int expected_result = data[1];
+    int actual_result = vector[1];
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_18_at() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    int expected_result = data[1];
+    int actual_result = vector.at(1);
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_19_assign() {
+    int data[3] = { 1,1,1 };
+    size_t size = 3;
+    Tvector<int> vector1;
+    Tvector<int> vector2(data, size);
+    Tvector<int> expected_result = vector2;
+    vector1.assign(size, 1);
+    Tvector<int> actual_result = vector1;
+    return TestSystem::check(expected_result, actual_result);
+}
 
 int main() {
     set_color(11, 0);
@@ -208,7 +257,12 @@ int main() {
     TestSystem::start_test(test_11_get_capacity, " test_11_get_capacity");
     TestSystem::start_test(test_12_get_begin, " test_12_get_begin");
     TestSystem::start_test(test_13_get_end, " test_13_get_end");
-    TestSystem::start_test(test_14_ñomparison_operator, " test_14_ñomparison_operator");
+    TestSystem::start_test(test_14_ñomparison_operator, " test_14_comparison_operator");
+    TestSystem::start_test(test_15_not_ñomparison_operator, " test_15_not_comparison_operator");
+    TestSystem::start_test(test_16_operator_assign, " test_16_operator_assign");
+    TestSystem::start_test(test_17_operator_staples, " test_17_operator_staples");
+    TestSystem::start_test(test_18_at, " test_18_at");
+    TestSystem::start_test(test_19_assign, " test_19_assign");
 
     
 
