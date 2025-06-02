@@ -319,6 +319,44 @@ bool test_27_pop_front() {
     return TestSystem::check(expected_result, actual_result);
 }
 
+bool test_28_shell_sort() {
+    int data[10] = { 1223343, 1546, 8777, 1000, 2, 3, 7, 9, 888, 99 };
+    size_t size = 10;
+    Tvector<int> vector(data, size);
+
+    int sorted_data[10] = { 2, 3, 7, 9, 99, 888, 1000, 1546, 8777, 1223343 };
+    Tvector<int> sorted_vector(sorted_data, size);
+
+    shell_sort(vector);
+    Tvector<int> expected_result = sorted_vector;
+    Tvector<int> actual_result = vector;
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_29_find_first() {
+    int data[6] = { 1 ,3, 3, 4, 5, 3 };
+    size_t size = 6;
+    Tvector<int> vector(data, size);
+    size_t expected_result = 2;
+    size_t actual_result = find_first_element(vector, 3);
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_30_find_last() {
+    int data[6] = { 1 ,3, 3, 4, 5, 3 };
+    size_t size = 6;
+    Tvector<int> vector(data, size);
+    size_t expected_result = 6;
+    size_t actual_result = find_last_element(vector, 3);
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_31_find_count_of_all_suitable_elements() {
+    int data[7] = { 1 ,3, 3, 4, 5, 3, 3};
+    size_t size = 7;
+    Tvector<int> vector(data, size);
+    size_t expected_result = 4;
+    size_t actual_result = find_count_of_all_suitable_elements(vector, 3);
+    return TestSystem::check(expected_result, actual_result);
+}
+
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
@@ -347,9 +385,13 @@ int main() {
     TestSystem::start_test(test_22_push_front, " test_22_push_front");
     TestSystem::start_test(test_23_insert, " test_23_insert");
     TestSystem::start_test(test_24_push_back, " test_24_push_back");
-
-    
-    
+    TestSystem::start_test(test_25_pop_back, " test_25_pop_back");
+    TestSystem::start_test(test_26_erase, " test_26_erase");
+    TestSystem::start_test(test_27_pop_front, " test_27_pop_front");
+    TestSystem::start_test(test_28_shell_sort, " test_28_shell_sort");
+    TestSystem::start_test(test_29_find_first, " test_29_find_first");
+    TestSystem::start_test(test_30_find_last, " test_30_find_last");
+    TestSystem::start_test(test_31_find_count_of_all_suitable_elements, " test_31_find_count_of_all_suitable_elements");
     TestSystem::print_final_info();
     system("pause");
 
