@@ -165,6 +165,32 @@ bool test_11_get_capacity() {
     bool actual_result = vector.get_capacity();
     return TestSystem::check(expected_result, actual_result);
 }
+bool test_12_get_begin() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    int* expected_result = &(vector.get_data()[0]);
+    int* actual_result = vector.begin();
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_13_get_end() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector(data, size);
+    int* expected_result = &(vector.get_data()[0]) + size;
+    int* actual_result = vector.end();
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_14_ñomparison_operator() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector1(data, size);
+    Tvector<int> vector2(data, size);
+    bool expected_result = true;
+    bool actual_result = vector1 == vector2;
+    return TestSystem::check(expected_result, actual_result);
+}
+
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
@@ -180,9 +206,11 @@ int main() {
     TestSystem::start_test(test_9_get_size, " test_9_get_size");
     TestSystem::start_test(test_10_get_deleted, " test_10_get_deleted");
     TestSystem::start_test(test_11_get_capacity, " test_11_get_capacity");
+    TestSystem::start_test(test_12_get_begin, " test_12_get_begin");
+    TestSystem::start_test(test_13_get_end, " test_13_get_end");
+    TestSystem::start_test(test_14_ñomparison_operator, " test_14_ñomparison_operator");
 
-
-
+    
 
     TestSystem::print_final_info();
     system("pause");
