@@ -9,14 +9,17 @@
 #include <utility>
 #include <memory>
 #include <algorithm>
+
 template <class T>
 class Tvector {
- private:
-     static constexpr size_t RESERVE_MEMORY = 15;
-     static constexpr size_t MAX_PERCENT_DELETED = 15;
-     enum State {
-         empty, busy, deleted
-     };
+public:
+    enum State {
+        empty, busy, deleted
+    };
+private:
+    static constexpr size_t RESERVE_MEMORY = 15;
+    static constexpr size_t MAX_PERCENT_DELETED = 15;
+
     size_t _size;
     size_t _capacity;
     T* _data;
@@ -25,7 +28,8 @@ class Tvector {
     void resize(size_t new_size) {
         if (new_size == _size) {
             return;
-        } else if (new_size < _size) {
+        }
+        else if (new_size < _size) {
             for (size_t i = new_size; i < _size; ++i) {
                 if (_states[i] == State::deleted) {
                     _deleted--;
@@ -34,10 +38,11 @@ class Tvector {
                 _states[i] = State::empty;
             }
             _size = new_size;
-        } else {
+        }
+        else {
             size_t new_capacity = new_size + RESERVE_MEMORY;
             T* new_data = static_cast<T*>
-              (::operator new(new_capacity * sizeof(T)));
+                (::operator new(new_capacity * sizeof(T)));
             State* new_states = new State[new_capacity];
             for (size_t i = new_size; i < new_capacity; ++i) {
                 new_states[i] = State::empty;
@@ -75,7 +80,8 @@ class Tvector {
     void resize(size_t new_size, const T& value) {
         if (new_size == _size) {
             return;
-        } else if (new_size < _size) {
+        }
+        else if (new_size < _size) {
             for (size_t i = new_size; i < _size; ++i) {
                 if (_states[i] == State::deleted) {
                     _deleted--;
@@ -84,7 +90,8 @@ class Tvector {
                 _states[i] = State::empty;
             }
             _size = new_size;
-        } else {
+        }
+        else {
             size_t new_capacity = new_size + RESERVE_MEMORY;
             T* new_data = static_cast<T*>
                 (::operator new(new_capacity * sizeof(T)));
@@ -124,14 +131,16 @@ class Tvector {
     }
     void shrink_to_fit() {
         if (_size >= _capacity) {
-        } else if (_size == 0) {
+        }
+        else if (_size == 0) {
             delete[] _data;
             delete[] _states;
             _data = nullptr;
             _states = nullptr;
             _capacity = 0;
             _deleted = 0;
-        } else {
+        }
+        else {
             T* new_data = new T[_size];
             State* new_states = new State[_size];
             for (size_t i = 0; i < _size; ++i) {
@@ -196,7 +205,7 @@ class Tvector {
     inline bool is_full() const noexcept {
         return _size == _capacity;
     }
- public:
+public:
     Tvector()  noexcept {
         _size = 0;
         _capacity = 0;
@@ -208,7 +217,7 @@ class Tvector {
         _size = size;
         _capacity = size + RESERVE_MEMORY;
         _data = new T[_capacity];
-        
+
         try {
             _states = new State[_capacity];
         }
@@ -240,7 +249,8 @@ class Tvector {
             if (i < _size) {
                 _data[i] = data[i];
                 _states[i] = State::busy;
-            } else {
+            }
+            else {
                 _states[i] = State::empty;
             }
         }
@@ -295,13 +305,13 @@ class Tvector {
         return _states;
     }
 
-    inline T& front() noexcept {
+    inline T& front() {
         if (_size == 0) {
             throw std::out_of_range("Vector is empty");
         }
         return _data[0];
     }
-    inline T& back() noexcept {
+    inline T& back() {
         if (_size == 0) {
             throw std::out_of_range("Vector is empty");
         }
@@ -382,7 +392,7 @@ class Tvector {
         }
         if (_states[index] != busy) {
             throw std::logic_error
-              ("Element at this index is not available (deleted or empty)");
+            ("Element at this index is not available (deleted or empty)");
         }
         return _data[index];
     }
@@ -426,21 +436,9 @@ class Tvector {
         _data[index] = value;
         _states[index] = State::busy;
     }
-    std::ostream& operator<<(std::ostream& out) {
-        out << "[";
-        size_t busy_count = 0;
-        for (size_t i = 0; i < _size; ++i) {
-            if (_states[i] == State::busy) {
-                if (busy_count > 0) {
-                    out << ", ";
-                    busy_count++;
-                }
-                out << _data[i];
-            }
-        }
-        out << "]";
-        return out;
-    }
+
+    template<typename T>
+    friend std::ostream& operator<<(std::ostream&, const Tvector<T>& vector);
 
     void push_front(const T& value) {
         if (_size >= _capacity) {
@@ -483,9 +481,9 @@ class Tvector {
         if (_size == 0) {
             return;
         }
-            _data[_size - 1].~T();
-            _states[_size - 1] = State::empty;
-            _size--;
+        _data[_size - 1].~T();
+        _states[_size - 1] = State::empty;
+        _size--;
     }
     void erase(size_t position) {
         if (position >= _size) {
@@ -517,16 +515,33 @@ class Tvector {
             }
         }
     }
-    friend void shell_sort(Tvector<T>& object) noexcept;
-    friend void shuffle(Tvector<T>& object) noexcept;
-    friend size_t find_first_element(const Tvector<T>& object, const T& value);
-    friend size_t find_last_element(const Tvector<T>& object, const T& value);
-    friend size_t find_count_of_all_suitable_elements(const Tvector<T>& object, const T& value);
+    template <class T> friend void shell_sort(Tvector<T>& object) noexcept;
+    template <class T> friend void shuffle(Tvector<T>& object) noexcept;
+    template <class T> friend size_t find_first_element(const Tvector<T>& object, const T& value);
+    template <class T> friend size_t find_last_element(const Tvector<T>& object, const T& value);
+    template <class T> friend size_t find_count_of_all_suitable_elements(const Tvector<T>& object, const T& value);
 };
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const Tvector<T>& vector) {
+    out << "[";
+    bool first = true;
+    for (size_t i = 0; i < vector._size; ++i) {
+        if (vector._states[i] == Tvector<T>::State::busy) {
+            if (!first) out << ", ";
+            out << vector._data[i];
+            first = false;
+        }
+    }
+    out << "]";
+    return out;
+}
+
+
 template <class T>
 void shell_sort(Tvector<T>& object) noexcept {
-    if (object._size < 2 || object._data == nullptr 
-       || object._states == nullptr) {
+    if (object._size < 2 || object._data == nullptr
+        || object._states == nullptr) {
         return;
     }
     size_t h = 1;
@@ -546,7 +561,8 @@ void shell_sort(Tvector<T>& object) noexcept {
 
                 if (object._data[j] < object._data[previous]) {
                     std::swap(object._data[j], object._data[previous]);
-                } else {
+                }
+                else {
                     break;
                 }
             }
@@ -584,12 +600,13 @@ size_t find_first_element(const Tvector<T>& object, const T& value) {
     for (size_t i = 0; i < object._size; i++) {
         if (object._states[i] == object.State::deleted) {
             continue;
-        } else if (object._data[i] == value && object._states[i] == object.State::busy) {
-            return result+1;
+        }
+        else if (object._data[i] == value && object._states[i] == object.State::busy) {
+            return result + 1;
         }
         result++;
     }
-    return 0; 
+    return 0;
 }
 template <class T>
 size_t find_last_element(const Tvector<T>& object, const T& value) {
@@ -606,7 +623,7 @@ size_t find_last_element(const Tvector<T>& object, const T& value) {
     }
     return last_pos;
 }
-template <class T> 
+template <class T>
 size_t find_count_of_all_suitable_elements(const Tvector<T>& object, const T& value) {
     size_t count = 0;
     for (size_t i = 0; i < object._size; ++i) {
