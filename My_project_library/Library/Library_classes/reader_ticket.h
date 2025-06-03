@@ -5,16 +5,21 @@
 class Ticket {
 private:
     size_t _ticket_id;
-    Books _reserved_books_list;
     Books _books_on_hand_list;
 public:
     size_t get_id() const {
         return _ticket_id;
     }
-    Books& get_reserved_books_list() {
-        return _reserved_books_list;
-    }
-    Books& get_books_on_hand_list() {
+    const Books& get_books_on_hand_list() {
         return _books_on_hand_list;
+    }
+    void add_book(const Book& book) {
+        _books_on_hand_list.add_book(book);
+    }
+    void delete_book(const std::string& book_id) {
+        _books_on_hand_list.delete_book(book_id);
+    }
+    size_t get_books_on_hand_list_size() {
+        return _books_on_hand_list.get_books_list_size();
     }
 };
