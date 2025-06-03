@@ -18,7 +18,7 @@ public:
         _author(author),
         _language(language),
         _publishing_house(publishing_house),
-        _book_name(book_name){};
+        _book_name(book_name) {};
     Book() = default;
     Book(const Book& other) = default;
     std::string get_book_id() const {
@@ -55,4 +55,3 @@ public:
         _book_name = book_name;
     }
 };
-
