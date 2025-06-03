@@ -181,7 +181,7 @@ bool test_13_get_end() {
     int* actual_result = vector.end();
     return TestSystem::check(expected_result, actual_result);
 }
-bool test_14_ñomparison_operator() {
+bool test_14_ñomparison_operator_true() {
     int data[3] = { 1,2,3 };
     size_t size = 3;
     Tvector<int> vector1(data, size);
@@ -190,7 +190,18 @@ bool test_14_ñomparison_operator() {
     bool actual_result = vector1 == vector2;
     return TestSystem::check(expected_result, actual_result);
 }
-bool test_15_not_ñomparison_operator() {
+bool test_14_ñomparison_operator_false() {
+    int data1[3] = { 1,2,3 };
+    size_t size1 = 3;
+    int data2[4] = { 1,2,3,4 };
+    size_t size2 = 4;
+    Tvector<int> vector1(data1, size1);
+    Tvector<int> vector2(data2, size2);
+    bool expected_result = false;
+    bool actual_result = vector1 == vector2;
+    return TestSystem::check(expected_result, actual_result);
+}
+bool test_15_not_ñomparison_operator_true() {
     int data1[3] = { 1,2,3 };
     size_t size1 = 3;
     int data2[4] = { 1,2,3,4 };
@@ -201,6 +212,15 @@ bool test_15_not_ñomparison_operator() {
     bool actual_result = vector1 != vector2;
     return TestSystem::check(expected_result, actual_result);
 } 
+bool test_15_not_ñomparison_operator_false() {
+    int data[3] = { 1,2,3 };
+    size_t size = 3;
+    Tvector<int> vector1(data, size);
+    Tvector<int> vector2(data, size);
+    bool expected_result = false;
+    bool actual_result = vector1 != vector2;
+    return TestSystem::check(expected_result, actual_result);
+}
 bool test_16_operator_assign() {
     int data1[3] = { 1,2,3 };
     size_t size1 = 3;
@@ -318,7 +338,6 @@ bool test_27_pop_front() {
         && vector[1] == 3;
     return TestSystem::check(expected_result, actual_result);
 }
-
 bool test_28_shell_sort() {
     int data[10] = { 1223343, 1546, 8777, 1000, 2, 3, 7, 9, 888, 99 };
     size_t size = 10;
@@ -356,7 +375,6 @@ bool test_31_find_count_of_all_suitable_elements() {
     size_t actual_result = find_count_of_all_suitable_elements(vector, 3);
     return TestSystem::check(expected_result, actual_result);
 }
-
 int main() {
     set_color(11, 0);
     std::cout << "TESTS FOR CLASS TVECTOR:" << std::endl;
@@ -374,8 +392,10 @@ int main() {
     TestSystem::start_test(test_11_get_capacity, " test_11_get_capacity");
     TestSystem::start_test(test_12_get_begin, " test_12_get_begin");
     TestSystem::start_test(test_13_get_end, " test_13_get_end");
-    TestSystem::start_test(test_14_ñomparison_operator, " test_14_comparison_operator");
-    TestSystem::start_test(test_15_not_ñomparison_operator, " test_15_not_comparison_operator");
+    TestSystem::start_test(test_14_ñomparison_operator_true, " test_14_ñomparison_operator_true");
+    TestSystem::start_test(test_14_ñomparison_operator_false, " test_14_ñomparison_operator_false");
+    TestSystem::start_test(test_15_not_ñomparison_operator_true, " test_15_not_ñomparison_operator_true");
+    TestSystem::start_test(test_15_not_ñomparison_operator_false, " test_15_not_ñomparison_operator_false");
     TestSystem::start_test(test_16_operator_assign, " test_16_operator_assign");
     TestSystem::start_test(test_17_operator_staples, " test_17_operator_staples");
     TestSystem::start_test(test_18_at, " test_18_at");
@@ -394,6 +414,5 @@ int main() {
     TestSystem::start_test(test_31_find_count_of_all_suitable_elements, " test_31_find_count_of_all_suitable_elements");
     TestSystem::print_final_info();
     system("pause");
-
     return 0;
 }
