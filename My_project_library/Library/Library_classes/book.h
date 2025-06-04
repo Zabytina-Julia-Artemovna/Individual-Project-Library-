@@ -54,4 +54,12 @@ public:
     void set_book_name(const std::string& book_name) {
         _book_name = book_name;
     }
+    std::string to_csv_line() const {
+        return _book_id + "," +
+            std::to_string(_year_of_publication) + "," +
+            _author + "," +
+            _language + "," +
+            _publishing_house + "," +
+            _book_name;
+    }
 };
